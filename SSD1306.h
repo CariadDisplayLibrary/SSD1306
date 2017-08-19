@@ -99,7 +99,7 @@ class SSD1306 : public DisplayCore {
         void displayOff();
 
         void setRotation(int r);
-        void invertDisplay(boolean i) {}
+        void invertDisplay(boolean __attribute__((unused)) i) {}
 
         void startBuffer() { _buffered++; }
         void endBuffer() { _buffered--; if (_buffered == 0) {updateDisplay();} }
@@ -116,6 +116,7 @@ class SSD1306_BB : public SSD1306 {
         p32_ioport *_sck_port;
         uint32_t _mosi_mask;
         uint32_t _sck_mask;
+
         uint32_t _mosi_pin;
         uint32_t _sck_pin;
 
@@ -126,7 +127,7 @@ class SSD1306_BB : public SSD1306 {
         virtual void data(uint8_t d);
 
     public:
-        SSD1306_BB(uint32_t mosi, uint32_t sck, int cs, int dc, int vdd, int vbat, int reset = -1) : _mosi_pin(mosi), _sck_pin(sck), SSD1306(cs, dc, vdd, vbat, reset) {}
+        SSD1306_BB(uint32_t mosi, uint32_t sck, int cs, int dc, int vdd, int vbat, int reset = -1) : SSD1306(cs, dc, vdd, vbat, reset), _mosi_pin(mosi), _sck_pin(sck) {}
         virtual void initializeDevice();
 };
 
