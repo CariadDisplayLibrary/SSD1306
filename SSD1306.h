@@ -99,7 +99,7 @@ class SSD1306 : public DisplayCore {
         void displayOff();
 
         void setRotation(int r);
-        void invertDisplay(boolean __attribute__((unused)) i) {}
+        void invertDisplay(bool __attribute__((unused)) i) {}
 
         void startBuffer() { _buffered++; }
         void endBuffer() { _buffered--; if (_buffered == 0) {updateDisplay();} }
