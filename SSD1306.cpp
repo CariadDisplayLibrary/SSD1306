@@ -30,128 +30,30 @@
 
 #include <SSD1306.h>
 
-void SSD1306::initializeDevice() {
-    _spi->begin();
-    _spi->setSpeed(20000000UL);
-    pinMode(_cs, OUTPUT);
-    digitalWrite(_cs, HIGH);
-    pinMode(_dc, OUTPUT);
-    digitalWrite(_dc, DC_COMMAND);
-    pinMode(_vdd, OUTPUT);
-    digitalWrite(_vdd, LOW);
-    pinMode(_vbat, OUTPUT);
-    digitalWrite(_vbat, LOW);
-
-    // Start off by powering the thing up.  Step one is
-    // turn on the VDD supply.
-    digitalWrite(_vdd, HIGH);
-    delay(1);
-
-    displayOff();
-
-    // Then do a reset if we control the reset pin:
-
-    if (_reset >= 0) {
-        pinMode(_reset, OUTPUT);
-        digitalWrite(_reset, HIGH);
-        delay(20);
-        digitalWrite(_reset, LOW);
-        delay(20);
-        digitalWrite(_reset, HIGH);
-    }
-
-    // Now configure the charge pump:
+void SSD1306::initDevice() {
 
     command(0x8D, 0x14);
     command(0xD9, 0xF1);
 
-    // Now VBAT needs to be turned on:
+    command(CMD_SEG_REMAP);
+    command(CMD_COM_DIR);
 
-    digitalWrite(_vbat, HIGH);
-    delay(100);
-
-        command(CMD_SEG_REMAP);
-        command(CMD_COM_DIR);
-    // Invert the display
-    if (_width == 128 && _height == 32) {
-
-        // Sequential COM
+    if (_hw_width == 128 && _hw_height == 32) {
         command(CMD_COM_CONFIG);
         command(0x20);
     }
 
-    // Display on
-
-    displayOn();
-}
-
-void SSD1306_BB::initializeDevice() {
-    pinMode(_cs, OUTPUT);
-    digitalWrite(_cs, HIGH);
-    pinMode(_dc, OUTPUT);
-    digitalWrite(_dc, DC_COMMAND);
-    if (_vdd != NOT_A_PIN) {
-        pinMode(_vdd, OUTPUT);
-        digitalWrite(_vdd, LOW);
-    }
-
-    if (_vbat != NOT_A_PIN) {
-        pinMode(_vbat, OUTPUT);
-        digitalWrite(_vbat, LOW);
-    }
-
-    pinMode(_mosi_pin, OUTPUT);
-    pinMode(_sck_pin, OUTPUT);
-
-    _mosi_port = getPortInformation(_mosi_pin, &_mosi_mask);
-    _sck_port = getPortInformation(_sck_pin, &_sck_mask);
-
-    if (_vdd != NOT_A_PIN) {
-        // Start off by powering the thing up.  Step one is
-        // turn on the VDD supply.
-        digitalWrite(_vdd, HIGH);
-        delay(1);
-    }
-
-    displayOff();
-
-    // Then do a reset if we control the reset pin:
-
-    if (_reset >= 0) {
-        pinMode(_reset, OUTPUT);
-        digitalWrite(_reset, HIGH);
-        delay(20);
-        digitalWrite(_reset, LOW);
-        delay(20);
-        digitalWrite(_reset, HIGH);
-    }
-
-    // Now configure the charge pump:
-
-    command(0x8D, 0x14);
-    command(0xD9, 0xF1);
-
-    // Now VBAT needs to be turned on:
-
-    if (_vbat != NOT_A_PIN) {
-        digitalWrite(_vbat, HIGH);
-        delay(100);
-    }
-
-    // Invert the display
-    command(CMD_SEG_REMAP);
-    command(CMD_COM_DIR);
-
-    // Sequential COM
-    command(CMD_COM_CONFIG);
-    command(0x20);
-
-    // Display on
+    command(CMD_SET_CONTRAST, 0x80);
 
     displayOn();
 }
 
 #define C2B(X, Y) (((Y) << 7) + (X))
+
+void SSD1306::setDisplayOffset(int x, int y) {
+    _offset_x = x;
+    _offset_y = y;
+}
 
 void SSD1306::setPixel(int x, int y, color_t color) {
     uint8_t row;
@@ -163,7 +65,7 @@ void SSD1306::setPixel(int x, int y, color_t color) {
     x += _offset_x;
     y += _offset_y;
 
-    if((x < 0) ||(x >= 128) || (y < 0) || (y >= 64))
+    if((x < 0) ||(x >= _width) || (y < 0) || (y >= _height))
         return;
 
     row = y>>3;
@@ -192,68 +94,6 @@ void SSD1306::displayOff() {
     command(CMD_DISP_OFF);
 }
 
-void SSD1306::command(uint8_t c) {
-    digitalWrite(_dc, DC_COMMAND);
-    digitalWrite(_cs, LOW);
-    _spi->transfer(c);
-    digitalWrite(_cs, HIGH);
-}
-
-void SSD1306_BB::command(uint8_t c) {
-    digitalWrite(_dc, DC_COMMAND);
-    digitalWrite(_cs, LOW);
-    sendByte(c);
-    digitalWrite(_cs, HIGH);
-}
-
-void SSD1306::command(uint8_t c1, uint8_t c2) {
-    digitalWrite(_dc, DC_COMMAND);
-    digitalWrite(_cs, LOW);
-    _spi->transfer(c1);
-    _spi->transfer(c2);
-    digitalWrite(_cs, HIGH);
-}
-
-void SSD1306_BB::command(uint8_t c1, uint8_t c2) {
-    digitalWrite(_dc, DC_COMMAND);
-    digitalWrite(_cs, LOW);
-    sendByte(c1);
-    sendByte(c2);
-    digitalWrite(_cs, HIGH);
-}
-
-void SSD1306::command(uint8_t c1, uint8_t c2, uint8_t c3) {
-    digitalWrite(_dc, DC_COMMAND);
-    digitalWrite(_cs, LOW);
-    _spi->transfer(c1);
-    _spi->transfer(c2);
-    _spi->transfer(c3);
-    digitalWrite(_cs, HIGH);
-}
-
-void SSD1306_BB::command(uint8_t c1, uint8_t c2, uint8_t c3) {
-    digitalWrite(_dc, DC_COMMAND);
-    digitalWrite(_cs, LOW);
-    sendByte(c1);
-    sendByte(c2);
-    sendByte(c3);
-    digitalWrite(_cs, HIGH);
-}
-
-void SSD1306::data(uint8_t c) {
-    digitalWrite(_dc, DC_DATA);
-    digitalWrite(_cs, LOW);
-    _spi->transfer(c);
-    digitalWrite(_cs, HIGH);
-}
-
-void SSD1306_BB::data(uint8_t c) {
-    digitalWrite(_dc, DC_DATA);
-    digitalWrite(_cs, LOW);
-    sendByte(c);
-    digitalWrite(_cs, HIGH);
-}
-
 void SSD1306::setPage(int page) {
     command(0x22, page & 0x07, page & 0x07);
 }
@@ -264,10 +104,10 @@ void SSD1306::setY(int y) {
 }
 
 void SSD1306::updateDisplay() {
-    for (int p = 0; p < 8; p++) {
+    for (int p = 0; p < _hw_height/8; p++) {
         setPage(p);
         setY(0);
-        for (int y = 0; y < 128; y++) {
+        for (int y = 0; y < _hw_width; y++) {
             data(_buffer[C2B(y, p)]);
         }
     }
@@ -275,25 +115,13 @@ void SSD1306::updateDisplay() {
 
 void SSD1306::fillScreen(color_t color) {
     if (color) { 
-        memset(_buffer, 0xFF, 128*8);
+        memset(_buffer, 0xFF, 128*(_height / 8));
     } else {
-        memset(_buffer, 0x00, 128*8);
+        memset(_buffer, 0x00, 128*(_height / 8));
     }
 
     if (_buffered == 0) {
         updateDisplay();
-    }
-}
-
-void SSD1306_BB::sendByte(uint8_t b) {
-    for (int i = 0; i < 8; i++) {
-        if (b & (1 << (7-i))) {
-            _mosi_port->lat.set = _mosi_mask;
-        } else {
-            _mosi_port->lat.clr = _mosi_mask;
-        }
-        _sck_port->lat.set = _sck_mask;
-        _sck_port->lat.clr = _sck_mask;
     }
 }
 
@@ -303,21 +131,23 @@ void SSD1306::setRotation(int r) {
 
     switch (r & 0x03) {
         case 0:
-            _width = 128;
-            _height = 64;
+        case 2:
+            _width = _hw_width;
+            _height = _hw_height;
             break;
         case 1:
-            _width = 64;
-            _height = 128;
-            break;
-        case 2:
-            _width = 128;
-            _height = 64;
-            break;
         case 3:
-            _width = 64;
-            _height = 128;
+            _width = _hw_height;
+            _height = _hw_width;
             break;
     }
     clearClipping();
+}
+
+void SSD1306::setBacklight(uint8_t b) {
+    command(CMD_SET_CONTRAST, b);
+}
+
+void SSD1306::invertDisplay(bool i) {
+    command(i ? 0xA7 : 0xA6);
 }
