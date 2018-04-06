@@ -151,3 +151,9 @@ void SSD1306::setBacklight(uint8_t b) {
 void SSD1306::invertDisplay(bool i) {
     command(i ? 0xA7 : 0xA6);
 }
+
+void SSD1306::drawLine(int x0, int y0, int x1, int y1, color_t color) {
+    startBuffer();
+    DisplayCore::drawLine(x0, y0, x1, y1, color);
+    endBuffer();
+}

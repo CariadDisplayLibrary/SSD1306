@@ -92,6 +92,8 @@ class SSD1306 : public DisplayCore {
         void fillScreen(color_t color);
 
         void setDisplayOffset(int x, int y);
+
+        void drawLine(int x0, int y0, int x1, int y1, color_t color);
 };
 
 #endif
