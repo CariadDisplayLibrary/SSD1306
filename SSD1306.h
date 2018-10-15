@@ -31,7 +31,6 @@
  */
 
 #include <DisplayCore.h>
-#include <DSPI.h>
 
 class SSD1306 : public DisplayCore {
 
@@ -49,6 +48,7 @@ class SSD1306 : public DisplayCore {
         int _offset_y;
 
         uint8_t _buffer[8*128]; // 8 pages of 128 bytes.
+        uint8_t _dirty[8] = {1, 1, 1, 1, 1, 1, 1, 1};
         void updateDisplay();
 
         virtual void command(uint8_t c) = 0;
