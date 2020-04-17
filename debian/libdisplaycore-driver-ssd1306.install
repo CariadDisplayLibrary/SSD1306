@@ -1,2 +1,4 @@
-SSD1306.cpp libraries/DisplayCore/SSD1306
-SSD1306.h libraries/DisplayCore/SSD1306
+library.json libraries/DisplayCore/SSD1306
+library.properties libraries/DisplayCore/SSD1306
+README.md libraries/DisplayCore/SSD1306
+src libraries/DisplayCore/SSD1306

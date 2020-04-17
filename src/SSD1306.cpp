@@ -77,7 +77,7 @@ void SSD1306::setPixel(int x, int y, color_t color) {
         _buffer[C2B(x, row)] &= ~mask;
     }
 
-    _dirty[row] = 1;
+    _dirty[row * 16 + (x/8)] = 1;
 
     if (_buffered == 0) {
         setPage(row);
@@ -107,12 +107,18 @@ void SSD1306::setY(int y) {
 
 void SSD1306::updateDisplay() {
     for (int p = 0; p < _hw_height/8; p++) {
-        if (_dirty[p] == 1) {
-            _dirty[p] = 0;
-            setPage(p);
-            setY(0);
-            for (int y = 0; y < _hw_width; y++) {
-                data(_buffer[C2B(y, p)]);
+        int last = 0;
+        for (int c = 0; c < 16; c++) {
+            if (_dirty[p * 16 + c] == 1) {
+                if (last == 0) {
+                    setPage(p);
+                    setY(c * 8);
+                }
+                _last = _dirty[p * 16 + c];
+                _dirty[p * 16 + c] = 0;
+                for (int y = 0; y < 8; y++) {
+                    data(_buffer[C2B((c * 8) + y, p)]);
+                }
             }
         }
     }
@@ -125,7 +131,7 @@ void SSD1306::fillScreen(color_t color) {
         memset(_buffer, 0x00, 128*(_height / 8));
     }
 
-    for (int i = 0; i < _hw_height/8; i++) {
+    for (int i = 0; i < (8 * 16); i++) {
         _dirty[i] = 1;
     }
 
