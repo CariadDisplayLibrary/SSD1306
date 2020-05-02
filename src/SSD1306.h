@@ -30,9 +30,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <DisplayCore.h>
+#include <Cariad.h>
 
-class SSD1306 : public DisplayCore {
+class SSD1306 : public Cariad {
 
     protected:
         static const int CMD_SET_CONTRAST      = 0x81;

@@ -169,6 +169,6 @@ void SSD1306::invertDisplay(bool i) {
 
 void SSD1306::drawLine(int x0, int y0, int x1, int y1, color_t color) {
     startBuffer();
-    DisplayCore::drawLine(x0, y0, x1, y1, color);
+    Cariad::drawLine(x0, y0, x1, y1, color);
     endBuffer();
 }
