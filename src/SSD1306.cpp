@@ -114,7 +114,7 @@ void SSD1306::updateDisplay() {
                     setPage(p);
                     setY(c * 8);
                 }
-                _last = _dirty[p * 16 + c];
+                last = _dirty[p * 16 + c];
                 _dirty[p * 16 + c] = 0;
                 for (int y = 0; y < 8; y++) {
                     data(_buffer[C2B((c * 8) + y, p)]);
