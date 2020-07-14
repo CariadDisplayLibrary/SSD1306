@@ -1,1 +1,26 @@
-{"authors":{"name":"Majenko Technologies","url":"http:\/\/majenko.co.uk"},"dependencies":[{"name":"Cariad","version":"2.1.0"}],"description":"SSD1306 for Cariad","export":{"exclude":"debian"},"frameworks":"arduino","homepage":"http:\/\/cariad.org\/wiki\/index.php?title=Acorn","keywords":"display, cariad, tft, lcd, glcd, oled, graphics, font","name":"SSD1306","platforms":"microchippic32","repository":{"type":"git","url":"https:\/\/github.com\/CariadDisplayLibrary\/SSD1306.git"},"version":"2.1.8"}
+{
+    "authors": {
+        "name": "Majenko Technologies",
+        "url": "http:\/\/majenko.co.uk"
+    },
+    "dependencies": [
+        {
+            "name": "Cariad",
+            "version": "2.1.0"
+        }
+    ],
+    "description": "SSD1306 for Cariad",
+    "export": {
+        "exclude": "debian"
+    },
+    "frameworks": "arduino",
+    "homepage": "https:\/\/github.com\/CariadDisplayLibrary\/SSD1306",
+    "keywords": "display, cariad, tft, lcd, glcd, oled, graphics, font",
+    "name": "SSD1306",
+    "platforms": "microchippic32",
+    "repository": {
+        "type": "git",
+        "url": "https:\/\/github.com\/CariadDisplayLibrary\/SSD1306"
+    },
+    "version": "2.1.9"
+}
